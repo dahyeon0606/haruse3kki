@@ -1,0 +1,43 @@
+services:
+  app:
+    build: .
+    container_name: haruse3kki-dev
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env.dev
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: haruse3kki-db-dev
+    ports:
+      - "3307:3306"
+    env_file:
+      - .env.dev
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: haruse3kki_db_dev
+    volumes:
+      - db-dev-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2
+    container_name: haruse3kki-redis-dev
+    ports:
+      - "6380:6379"
+    restart: unless-stopped
+
+volumes:
+  db-dev-data:

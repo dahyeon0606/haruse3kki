@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  application:
+    name: haruse3kki
+
+server:
+  port: 8080
