@@ -22,11 +22,22 @@ CREATE TABLE meal (
                       meal_type  VARCHAR(45)  NOT NULL,
                       photo_url  VARCHAR(255),
                       content    VARCHAR(500),
-                      comment    VARCHAR(45),
                       eaten_at   DATETIME,
                       date       DATE         NOT NULL,
                       created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       CONSTRAINT fk_meal_user FOREIGN KEY (user_id) REFERENCES user(user_id)
+);
+
+CREATE TABLE comment (
+                         comment_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         meal_id    BIGINT       NOT NULL,
+                         couple_id  BIGINT       NOT NULL,
+                         user_id    BIGINT       NOT NULL,
+                         content    VARCHAR(500) NOT NULL,
+                         created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         CONSTRAINT fk_comment_meal   FOREIGN KEY (meal_id)   REFERENCES meal(meal_id),
+                         CONSTRAINT fk_comment_couple FOREIGN KEY (couple_id) REFERENCES couple(couple_id),
+                         CONSTRAINT fk_comment_user   FOREIGN KEY (user_id)   REFERENCES user(user_id)
 );
 
 CREATE INDEX idx_meal_user_date ON meal(user_id, date);
