@@ -22,7 +22,7 @@ CREATE TABLE meal (
                       meal_type  VARCHAR(45)  NOT NULL,
                       photo_url  VARCHAR(255),
                       content    VARCHAR(500),
-                      eaten_at   DATETIME,
+                      eaten_at   TIME,
                       date       DATE         NOT NULL,
                       created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
                       CONSTRAINT fk_meal_user FOREIGN KEY (user_id) REFERENCES user(user_id)
