@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface CoupleRepository extends JpaRepository<Couple, Long> {
     List<Couple> findByUser1OrUser2(User user1, User user2);
+
+    Couple findByCoupleId(Long coupleId);
 }

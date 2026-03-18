@@ -4,11 +4,12 @@ import com.haruse3kki.haruse3kki.domain.User;
 import com.haruse3kki.haruse3kki.dto.MealDTO;
 import com.haruse3kki.haruse3kki.service.MealService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,8 +17,16 @@ public class MealController {
     private final MealService mealService;
 
     @PostMapping("/meal/upload")
-    public ResponseEntity<String> upload(@AuthenticationPrincipal User user, @RequestBody MealDTO.uploadMealRequest request) {
+    public ResponseEntity<String> upload(@AuthenticationPrincipal User user, @RequestBody MealDTO.UploadMealRequest request) {
         mealService.uploadMeal(user.getUserId(), request);
         return ResponseEntity.ok("식사를 기록했습니다.");
+    }
+
+    @GetMapping("/meals")
+    public ResponseEntity<MealDTO.DailyResponse> view(@AuthenticationPrincipal User user,
+                                                      @RequestParam Long coupleId,
+                                                      @RequestParam LocalDate date) {
+        MealDTO.DailyResponse response = mealService.viewMeals(user.getUserId(), coupleId,date);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
