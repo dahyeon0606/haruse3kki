@@ -13,7 +13,6 @@ public class MealDTO {
     public static class UploadMealRequest {
         private MealType mealType;
         private String content;
-        private String photoUrl;
         private LocalTime eatenAt;
         private LocalDate date;
     }

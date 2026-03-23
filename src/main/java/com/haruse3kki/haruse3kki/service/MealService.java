@@ -11,6 +11,7 @@ import com.haruse3kki.haruse3kki.repository.MealRepository;
 import com.haruse3kki.haruse3kki.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -24,19 +25,25 @@ public class MealService {
     private final MealRepository mealRepository;
     private final UserRepository userRepository;
     private final CoupleRepository coupleRepository;
+    private final S3Service s3Service;
 
-    public void uploadMeal(Long userId, MealDTO.UploadMealRequest request) {
+    public void uploadMeal(Long userId, MealDTO.UploadMealRequest request, MultipartFile image) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
 
         mealRepository.findByMealTypeAndDateAndUser(request.getMealType(), request.getDate(), user)
                 .ifPresent(m -> { throw new CustomException(400, "이미 기록했습니다."); });
+
+        String photoUrl = null;
+        if (image != null && !image.isEmpty()) {
+            photoUrl = s3Service.upload(image);
+        }
 
         mealRepository.save(
                 Meal.builder()
                         .user(user)
                         .content(request.getContent())
                         .mealType(request.getMealType())
-                        .photoUrl(request.getPhotoUrl())
+                        .photoUrl(photoUrl)
                         .eatenAt(request.getEatenAt())
                         .date(request.getDate())
                 .build());
