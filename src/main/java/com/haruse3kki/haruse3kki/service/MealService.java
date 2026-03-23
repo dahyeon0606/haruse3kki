@@ -11,6 +11,7 @@ import com.haruse3kki.haruse3kki.repository.MealRepository;
 import com.haruse3kki.haruse3kki.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -85,5 +86,53 @@ public class MealService {
 
         return new MealDTO.DailyResponse(date,dailyMealViews);
 
+    }
+
+    @Transactional
+    public void updateMeal(Long userId, MealDTO.UpdateMealRequest request, MultipartFile image, Long mealId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
+
+        Meal meal = mealRepository.findById(mealId).orElseThrow(() -> new CustomException(404, "식사 기록을 찾을 수 없습니다."));
+
+        if (!meal.getUser().getUserId().equals(userId)) {
+            throw new CustomException(403, "본인 식사만 삭제할 수 있습니다.");
+        }
+
+        MealType mealType=request.getMealType()==null? meal.getMealType():request.getMealType();
+
+        String photoUrl= meal.getPhotoUrl();
+        if (image != null && !image.isEmpty()) {
+            photoUrl = s3Service.upload(image);                    // 1. 업로드 먼저
+            if (meal.getPhotoUrl() != null) {
+                s3Service.delete(meal.getPhotoUrl());   // 2. 성공 후 삭제
+            }
+        }
+
+        String content=request.getContent()==null?meal.getContent():request.getContent();
+
+        LocalTime eatenAt=request.getEatenAt()==null?meal.getEatenAt():request.getEatenAt();
+
+        LocalDate date=request.getDate()==null?meal.getDate():request.getDate();
+
+        meal.update(mealType,photoUrl,content,eatenAt,date);
+    }
+
+    @Transactional
+    public void deleteMeal(Long userId, Long mealId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
+
+        Meal meal = mealRepository.findById(mealId)
+                .orElseThrow(() -> new CustomException(404, "식사 기록을 찾을 수 없습니다."));
+
+        if (!meal.getUser().getUserId().equals(userId)) {
+            throw new CustomException(403, "본인 식사만 삭제할 수 있습니다.");
+        }
+
+        if (meal.getPhotoUrl() != null) {
+            s3Service.delete(meal.getPhotoUrl());
+        }
+
+        mealRepository.delete(meal);
     }
 }

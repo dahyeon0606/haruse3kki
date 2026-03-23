@@ -45,4 +45,12 @@ public class MealDTO {
         private Long coupleId;
         private LocalDate date;
     }
+
+    @Getter
+    public static class UpdateMealRequest {
+        private MealType mealType;
+        private String content;
+        private LocalTime eatenAt;
+        private LocalDate date;
+    }
 }

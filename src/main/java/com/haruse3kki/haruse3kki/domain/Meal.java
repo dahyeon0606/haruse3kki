@@ -44,4 +44,12 @@ public class Meal {
         this.eatenAt = eatenAt;
         this.date = date;
     }
+
+    public void update(MealType mealType, String photoUrl, String content, LocalTime eatenAt, LocalDate date) {
+        this.mealType = mealType;
+        this.photoUrl = photoUrl;
+        this.content = content;
+        this.eatenAt = eatenAt;
+        this.date = date;
+    }
 }

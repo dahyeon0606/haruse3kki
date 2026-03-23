@@ -34,4 +34,20 @@ public class MealController {
         MealDTO.DailyResponse response = mealService.viewMeals(user.getUserId(), coupleId,date);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @PatchMapping("/meal/{mealId}")
+    public ResponseEntity<String> updateMeal(@AuthenticationPrincipal User user,
+                                             @PathVariable Long mealId,
+                                             @RequestPart MealDTO.UpdateMealRequest request,
+                                             @RequestPart(required = false) MultipartFile image) {
+        mealService.updateMeal(user.getUserId(),request,image,mealId);
+        return ResponseEntity.status(HttpStatus.OK).body("식사를 수정했습니다.");
+    }
+
+    @DeleteMapping("/meal/{mealId}")
+    public ResponseEntity<String> deleteMeal(@AuthenticationPrincipal User user,
+                                             @PathVariable Long mealId) {
+        mealService.deleteMeal(user.getUserId(),mealId);
+        return ResponseEntity.status(HttpStatus.OK).body("식사를 삭제했습니다.");
+    }
 }
