@@ -42,6 +42,11 @@ public class S3Service {
     }
 
     public void delete(String fileUrl) {
+
+        if (fileUrl == null || !fileUrl.contains(".amazonaws.com/")) {
+            return;
+        }
+
         String key = fileUrl.substring(fileUrl.indexOf(".amazonaws.com/") + ".amazonaws.com/".length());
 
         s3Client.deleteObject(
