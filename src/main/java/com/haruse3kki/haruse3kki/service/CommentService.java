@@ -33,6 +33,11 @@ public class CommentService {
                 .orElseThrow(() -> new CustomException(404, "커플을 찾을 수 없습니다."));
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new CustomException(404, "식사를 찾을 수 없습니다."));
+        // 내가 해당 커플의 멤버인지 확인
+        if (!couple.getUser1().getUserId().equals(userId) &&
+                !couple.getUser2().getUserId().equals(userId)) {
+            throw new CustomException(403, "해당 커플의 멤버가 아닙니다.");
+        }
 
         commentRepository.save(
                 Comment.builder()
@@ -51,6 +56,11 @@ public class CommentService {
                 .orElseThrow(() -> new CustomException(404, "커플을 찾을 수 없습니다."));
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new CustomException(404, "식사를 찾을 수 없습니다."));
+        // 내가 해당 커플의 멤버인지 확인
+        if (!couple.getUser1().getUserId().equals(userId) &&
+                !couple.getUser2().getUserId().equals(userId)) {
+            throw new CustomException(403, "해당 커플의 멤버가 아닙니다.");
+        }
         List<Comment> comments = commentRepository.findByMealAndCouple(meal, couple);
 
 
@@ -71,7 +81,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(404, "댓글을 찾을 수 없습니다."));
 
-        if (!comment.getUser().equals(user)) {
+        if (!comment.getUser().getUserId().equals(userId)) {
             throw new CustomException(403, "본인의 댓글만 삭제할 수 있습니다.");
         }
         commentRepository.delete(comment);
