@@ -12,17 +12,20 @@ import com.haruse3kki.haruse3kki.repository.MealRepository;
 import com.haruse3kki.haruse3kki.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final CoupleRepository coupleRepository;
     private final MealRepository mealRepository;
 
+    @Transactional
     public void uploadComment(Long userId, Long coupleId, Long mealId,CommentDTO.UploadCommentRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
@@ -61,6 +64,7 @@ public class CommentService {
 
     }
 
+    @Transactional
     public void deleteComment(Long userId, Long commentId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
