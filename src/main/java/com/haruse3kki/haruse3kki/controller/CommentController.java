@@ -4,6 +4,7 @@ import com.haruse3kki.haruse3kki.domain.User;
 import com.haruse3kki.haruse3kki.dto.CommentDTO;
 import com.haruse3kki.haruse3kki.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class CommentController {
     public ResponseEntity<String> uploadComment(@AuthenticationPrincipal User user,
                                                 @PathVariable Long mealId,
                                                 @RequestParam Long coupleId,
-                                                @RequestBody CommentDTO.UploadCommentRequest request) {
+                                                @Valid @RequestBody CommentDTO.UploadCommentRequest request) {
         commentService.uploadComment(user.getUserId(), coupleId, mealId, request);
         return ResponseEntity.ok().body("댓글 작성 완료");
     }
