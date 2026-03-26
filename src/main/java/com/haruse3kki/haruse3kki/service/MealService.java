@@ -105,7 +105,7 @@ public class MealService {
         Meal meal = mealRepository.findById(mealId).orElseThrow(() -> new CustomException(404, "식사 기록을 찾을 수 없습니다."));
 
         if (!meal.getUser().getUserId().equals(userId)) {
-            throw new CustomException(403, "본인 식사만 삭제할 수 있습니다.");
+            throw new CustomException(403, "본인 식사만 수정할 수 있습니다.");
         }
 
         MealType mealType=request.getMealType()==null? meal.getMealType():request.getMealType();
