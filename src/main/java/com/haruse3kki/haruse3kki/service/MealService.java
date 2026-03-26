@@ -27,6 +27,7 @@ public class MealService {
     private final UserRepository userRepository;
     private final CoupleRepository coupleRepository;
     private final S3Service s3Service;
+    private final SseService sseService;
 
     public void uploadMeal(Long userId, MealDTO.UploadMealRequest request, MultipartFile image) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
@@ -48,6 +49,15 @@ public class MealService {
                         .eatenAt(request.getEatenAt())
                         .date(request.getDate())
                 .build());
+
+        List<Couple> couples=coupleRepository.findByUser1OrUser2(user,user);
+        for (Couple couple : couples) {
+            Long partnerId = couple.getUser1().getUserId().equals(userId) ?
+                    couple.getUser2().getUserId()
+                    : couple.getUser1().getUserId();
+
+            sseService.sendNotification(partnerId, user.getNickname()+"님이 식사를 기록했습니다.");
+        }
     }
 
     public MealDTO.DailyResponse viewMeals(Long userId, Long coupleId, LocalDate date) {
