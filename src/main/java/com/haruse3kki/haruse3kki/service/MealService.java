@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MealService {
     private final MealRepository mealRepository;
     private final UserRepository userRepository;
@@ -29,6 +30,7 @@ public class MealService {
     private final S3Service s3Service;
     private final SseService sseService;
 
+    @Transactional
     public void uploadMeal(Long userId, MealDTO.UploadMealRequest request, MultipartFile image) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
 
