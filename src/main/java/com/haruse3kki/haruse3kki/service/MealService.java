@@ -102,8 +102,6 @@ public class MealService {
 
     @Transactional
     public void updateMeal(Long userId, MealDTO.UpdateMealRequest request, MultipartFile image, Long mealId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
-
         Meal meal = mealRepository.findById(mealId).orElseThrow(() -> new CustomException(404, "식사 기록을 찾을 수 없습니다."));
 
         if (!meal.getUser().getUserId().equals(userId)) {
@@ -131,9 +129,6 @@ public class MealService {
 
     @Transactional
     public void deleteMeal(Long userId, Long mealId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(404, "유저를 찾을 수 없습니다."));
-
         Meal meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new CustomException(404, "식사 기록을 찾을 수 없습니다."));
 
