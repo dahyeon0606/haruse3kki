@@ -36,10 +36,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String accessToken= jwtUtil.generateAccessToken(user.getUserId());
         String refreshToken= jwtUtil.generateRefreshToken(user.getUserId());
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(
-                objectMapper.writeValueAsString(new UserDTO.TokenResponse(accessToken, refreshToken))
-        );
+        // 토큰을 쿼리 파라미터로 프론트에 전달
+        String redirectUrl = "http://localhost:5173/callback" +
+                "?accessToken=" + accessToken +
+                "&refreshToken=" + refreshToken;
+
+        System.out.println("리다이렉트 URL: " + redirectUrl);
+        response.sendRedirect(redirectUrl);
     }
 }
